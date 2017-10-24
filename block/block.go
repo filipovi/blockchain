@@ -16,7 +16,8 @@ type Block struct {
 	PHash     string `json:"p_hash"`
 }
 
-func (b Block) calculateHash() string {
+// CalculateHash return a sha256 sum for the Block
+func (b Block) CalculateHash() string {
 	input := strconv.Itoa(b.Index) + b.Timestamp + b.PHash + b.Data
 	h := sha256.New()
 	h.Write([]byte(input))
@@ -25,12 +26,14 @@ func (b Block) calculateHash() string {
 }
 
 // New create a new block
-func New(data string) Block {
+func New(data, pHash string, index int) Block {
 	b := Block{
-		Timestamp: time.UnixDate,
+		Timestamp: time.Now().String(),
 		Data:      data,
+		PHash:     pHash,
+		Index:     index,
 	}
 
-	b.Hash = b.calculateHash()
+	b.Hash = b.CalculateHash()
 	return b
 }
