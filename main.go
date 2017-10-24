@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	c "github.com/filipovi/blockchain/chain"
+	"github.com/filipovi/blockchain/chain"
 )
 
 func main() {
-	c := c.New()
-	c.Add("new 2")
-	c.Add("new 3")
+	c := chain.New()
 
 	fmt.Println("hello blockchain!")
-	fmt.Println(c.Blocks)
+	for _, b := range c.Blocks {
+		fmt.Println(b)
+	}
 }
