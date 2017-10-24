@@ -11,6 +11,8 @@ type Chain struct {
 	Blocks []block.Block `json:"blocs"`
 }
 
+const genesis = "genesis block"
+
 // GetLatestBlock return the last block of the chain
 func (c Chain) GetLatestBlock() block.Block {
 	return c.Blocks[len(c.Blocks)-1]
@@ -30,12 +32,18 @@ func (c Chain) Get(hash string) (block.Block, error) {
 }
 
 // Add a new block at the end of the chain
-func (c *Chain) Add(data string) error {
+func (c *Chain) Add(b block.Block) error {
 	l := len(c.Blocks)
+	if b.Index != l {
+		return fmt.Errorf("block not valid, index")
+	}
 	lb := c.GetLatestBlock()
-	b := block.New(data)
-	b.PHash = lb.Hash
-	b.Index = l
+	if b.PHash != lb.Hash {
+		return fmt.Errorf("block not valid, pHash")
+	}
+	if b.Hash != b.CalculateHash() {
+		return fmt.Errorf("block not valid, hash")
+	}
 
 	blocks := append(c.Blocks, b)
 	c.Blocks = blocks
@@ -51,8 +59,8 @@ func New() Chain {
 		Blocks: blocks,
 	}
 
-	b := block.New("init blockchain")
-	blocks[0] = b
+	gb := block.New(genesis, "0", 0)
+	blocks[0] = gb
 
 	c.Blocks = blocks
 
